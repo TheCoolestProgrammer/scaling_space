@@ -4,6 +4,11 @@ clock = pygame.time.Clock()
 screen_width = 1280
 screen_height = 720
 screen = pygame.display.set_mode((screen_width,screen_height))
+class Object():
+    def __init__(self, x,y):
+        self.x = x
+        self.y = y
+
 def events_check():
     global process_running
     for event in pygame.event.get():
