@@ -1,4 +1,5 @@
 import pygame
+import math
 pygame.init()
 clock = pygame.time.Clock()
 screen_width = 1280
@@ -70,30 +71,20 @@ def events_check():
                 scale = round(scale,2)
                 scaling()
     keys = pygame.mouse.get_pressed()
+    keys2= pygame.key.get_pressed()
     pos = coordinates_changer(*pygame.mouse.get_pos())
     if keys[0]:
         camera_center_x+= (pos[0] - camera_center_x)//scale
         camera_center_y+= (pos[1] - camera_center_y)//scale
+    if keys2[pygame.K_1]:
+        scale += scale_value
+        scale = round(scale, 2)
+        scaling()
+    if keys2[pygame.K_2]:
+        scale -= scale_value
+        scale = round(scale, 2)
+        scaling()
 def test_camera_draw():
-    # pygame.draw.line(screen, (0,255,0), (0,screen_height//2),(screen_width,screen_height//2))
-    # pygame.draw.line(screen, (0,255,0), (screen_width//2,0),(screen_width//2,screen_height))
-    # plank = (screen_width // 2) / scale
-    # # print(plank)
-    # for i in range(1,int(scale)+1):
-    #     pygame.draw.line(screen, (0, 255, 0), (((screen_width//2)-(screen_width//scale*i),0)[0], screen_height//2-5), (((screen_width//2)-(screen_width//scale*i),0)[0],  screen_height//2+5))
-    # for i in range(1,int(scale)+1):
-    #     pygame.draw.line(screen, (0, 255, 0), (((screen_width//2)+(screen_width//scale*i),0)[0], screen_height//2-5), (((screen_width//2)+(screen_width//scale*i),0)[0],  screen_height//2+5))
-    # for i in range(-screen_width//2,screen_width//2,scale):
-    #     now_pos =coordinates_changer(i,0)
-    #     # print(scale)
-    #     pygame.draw.line(screen,(0,255,0),(coordinates_changer2(camera_center_x+i,0)[0],0),(coordinates_changer2(camera_center_x+i,0)[0],screen_height))
-    # for i in range(0,screen_height//2,scale):
-    #     now_pos =coordinates_changer(0,i)
-    #     pygame.draw.line(screen,(0,255,0),(0,coordinates_changer2(0,camera_center_y+i)[1]),(screen_width,coordinates_changer2(0,camera_center_y+i)[1]))
-    #
-    # for i in range(screen_width//2):
-    #     now_pos = coordinates_changer(i, 0)
-    #
     font = pygame.font.SysFont("Times New Roman", scale//4)
 
     for x in range(0,screen_width):
@@ -106,21 +97,42 @@ def test_camera_draw():
             pygame.draw.line(screen,(0,255,0),(0,y),(screen_width,y),1)
             surface = font.render(str(coordinates_changer(0,y)[1] / scale), False, (255, 255, 255))
             screen.blit(surface, (0,y))
+def create_func():
+    func_coords=[]
+    x = -screen_width//2
+    way = 1
+    frequency=10
+    high_coof = 10
+    while coordinates_changer(x,0)[0] < coordinates_changer(screen_width,0)[0]:
+        # if coordinates_changer(x, 0)[0] % (k) == 0:
+        # x2 =coordinates_changer(x,0)[0]
+        y = math.cos(frequency*math.radians(x))*high_coof
+        # y = x**2
+        y = y*-1
+        # x2 = x
+        if 0<=coordinates_chaneg_in_pygame(0,y)[1] < screen_height:
+            new_cords=coordinates_chaneg_in_pygame(x,y)
+            func_coords.append(new_cords)
+        x+=way
+    return func_coords
 def draw_func():
-    for x in range(screen_width):
-        x2 =coordinates_changer(x,0)[0]
-        y = x2*x2
-        pygame.draw.circle(screen,(255,0,0),coordinates_chaneg_in_pygame(x2,y),5)
-def drawing(sprites):
+    func_coords = create_func()
+    # k = 1/scale
+    for i in range(1,len(func_coords)):
+        # pygame.draw.circle(screen,(255,0,0),(i[0],i[1]),scale//50)
+        pygame.draw.line(screen,(255,0,0),(func_coords[i-1][0],func_coords[i-1][1]),(func_coords[i][0], func_coords[i][1]),2)
+def drawing():
     screen.fill((0, 0, 0))
     test_camera_draw()
     draw_func()
     pygame.display.update()
 def mainloop():
+    # func_coords = create_func()
     while process_running:
         events_check()
         pygame.time.delay(20)
-        drawing(objects)
+        print(coordinates_changer(0,0)[0],coordinates_changer(screen_width,0)[0])
+        drawing()
 
 
 if __name__ == '__main__':
