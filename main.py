@@ -53,11 +53,11 @@ class Object():
         self.image = pygame.transform.scale(self.image,(normal_picture_size/scale,normal_picture_size/scale))
 
 def scaling():
-    global scale, objects, camera_y_changed,camera_x_changed
+    global scale, objects, func_coords
     for object in objects:
         object.image = pygame.image.load("planet.png")
         object.image = pygame.transform.scale(object.image, (normal_picture_size *(scale/100), normal_picture_size *(scale/100)))
-
+    func_coords = create_func()
 def events_check():
     global process_running, scale, scale_value, objects,camera_center_x,camera_center_y
     for event in pygame.event.get():
@@ -145,7 +145,7 @@ def create_func():
         x2 = coordinates_changer(x,0)[0]
         y = math.cos(frequency*math.radians(x2))*high_coof
         #parabola
-        # y = x**2
+        # y = x2**2
         y = y*-1
         # x2 = x
         # if 0<=coordinates_chaneg_in_pygame(0,y)[1] < screen_height:
@@ -162,7 +162,7 @@ def draw_func():
         scaled_cords2= coordinates_chaneg_in_pygame(func_coords[i][0],func_coords[i][1])
         # pygame.draw.circle(screen,(255,0,0),(i[0],i[1]),scale//50)
         # pygame.draw.line(screen,(255,0,0),(func_coords[i-1][0],func_coords[i-1][1]),(func_coords[i][0], func_coords[i][1]),2)
-        pygame.draw.line(screen,(255,0,0),(scaled_cords[0],scaled_cords[1]),(scaled_cords2[0],scaled_cords2[1]),2)
+        pygame.draw.line(screen,(255,0,0),(scaled_cords[0],scaled_cords[1]),(scaled_cords2[0],scaled_cords2[1]),int(scale))
 def drawing():
     screen.fill((0, 0, 0))
     test_camera_draw()
