@@ -198,8 +198,11 @@ def create_func():
         #     y = 1/x2
 
         # something
-        if x2 !=0:
-            y = 5*x2-x2**2+1/x2
+        if x2 !=0 and -100<x2<1000:
+            # y = 5*x2-x2**2+1/x2
+            y = math.sin((1/x2))**x2
+
+
             func_coords.append((x2,y))
         x+=way
     return func_coords
@@ -208,7 +211,8 @@ def draw_func():
     for i in range(1,len(func_coords)):
         scaled_cords= coordinates_chaneg_in_pygame(func_coords[i-1][0],func_coords[i-1][1])
         scaled_cords2= coordinates_chaneg_in_pygame(func_coords[i][0],func_coords[i][1])
-        pygame.draw.line(screen,(255,0,0),(scaled_cords[0],scaled_cords[1]),(scaled_cords2[0],scaled_cords2[1]),5)
+        if type(scaled_cords[0])==float and type(scaled_cords[1])==float and type(scaled_cords2[0])== float and type(scaled_cords2[1])== float:
+            pygame.draw.line(screen,(255,0,0),(scaled_cords[0],scaled_cords[1]),(scaled_cords2[0],scaled_cords2[1]),5)
 def drawing():
     screen.fill((0, 0, 0))
     test_camera_draw()
