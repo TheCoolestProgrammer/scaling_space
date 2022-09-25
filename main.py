@@ -178,7 +178,7 @@ def create_func():
         y = math.cos(frequency*math.radians(x2))*high_coof
         #parabola
         # y = x2**2
-        y = y*-1
+        # y = y*-1
         # x2 = x
         # if 0<=coordinates_chaneg_in_pygame(0,y)[1] < screen_height:
         # new_cords=coordinates_chaneg_in_pygame(x2*scale,y*scale)
