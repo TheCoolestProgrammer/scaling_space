@@ -86,6 +86,8 @@ def events_check():
 
                 # scale = round(scale,2)
                 scaling()
+            elif event.key == pygame.K_q:
+                camera_center_x=1000000
     keys = pygame.mouse.get_pressed()
     keys2= pygame.key.get_pressed()
 
@@ -134,29 +136,30 @@ def test_camera_draw():
     #         pygame.draw.line(screen,(0,255,0),(0,y),(screen_width,y),1)
     #         surface = font.render(str(round(-coordinates_changer(0,y)[1],2)), False, (255, 255, 255))
     #         screen.blit(surface, (0,y))
-
-    counter=0
+    x =camera_center_x-(camera_center_x%5)
+    y =camera_center_y-(camera_center_y%5)
+    counter=x
     while counter<=coordinates_changer(screen_width,0)[0]:
         pos = coordinates_chaneg_in_pygame(counter,0)[0]
         pygame.draw.line(screen,(0,255,0),(pos,0),(pos,screen_height),2)
         surface = font.render(str(counter), False, (255, 255, 255))
         screen.blit(surface, (pos,0))
         counter+= 5
-    counter = 0
+    counter = x
     while counter >= coordinates_changer(0, 0)[0]:
         pos = coordinates_chaneg_in_pygame(counter, 0)[0]
         pygame.draw.line(screen, (0, 255, 0), (pos, 0), (pos, screen_height), 2)
         surface = font.render(str(counter), False, (255, 255, 255))
         screen.blit(surface, (pos, 0))
         counter -= 5
-    counter = 0
+    counter = y
     while counter <= coordinates_changer(0, 0)[1]:
         pos = coordinates_chaneg_in_pygame(0,counter)[1]
         pygame.draw.line(screen, (0, 255, 0), (0,pos), (screen_width,pos), 2)
         surface = font.render(str(counter), False, (255, 255, 255))
         screen.blit(surface, (0,pos))
         counter += 5
-    counter = 0
+    counter = y
     while counter >= coordinates_changer(0, screen_height)[1]:
         pos = coordinates_chaneg_in_pygame(0, counter)[1]
         pygame.draw.line(screen, (0, 255, 0), (0, pos), (screen_width, pos), 2)
