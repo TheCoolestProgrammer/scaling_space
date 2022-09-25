@@ -6,7 +6,7 @@ screen_width = 1280
 screen_height = 720
 screen = pygame.display.set_mode((screen_width,screen_height))
 
-scale = 2
+scale = 1
 scale_value = 0.1
 
 camera_center_x = 0
@@ -27,7 +27,7 @@ def coordinates_changer(x,y):
     # else:
     #     new_x =camera_center_x-((screen_width//2 - x))
     # if y >= camera_center_y:
-    new_y = camera_center_y+((y-screen_height//2)/scale)
+    new_y = camera_center_y-((y-screen_height//2)/scale)
     # # else:
     #     new_y =((screen_height//2 - y))- camera_center_y
     return(new_x,new_y)
@@ -43,7 +43,7 @@ def coordinates_chaneg_in_pygame(x,y):
     # zero_point_x = camera_center_x-screen_width//2
     # zero_point_y = camera_center_y-screen_height//2
     new_x = (screen_width//2 + distance_x)
-    new_y = (screen_height//2 + distance_y)
+    new_y = (screen_height//2 - distance_y)
     return(new_x,new_y)
 class Object():
     def __init__(self, x,y):
@@ -100,6 +100,7 @@ def events_check():
         # camera_center_y+= (pos[1] - camera_center_y)
         # camera_center_y= pos[1]
         # print(camera_center_x,camera_center_y)
+        scaling()
 
     if keys2[pygame.K_1]:
         # if scale >= scale_value and scale_value < 1:
@@ -123,16 +124,47 @@ def events_check():
 def test_camera_draw():
     font = pygame.font.SysFont("Times New Roman", int(scale)*2)
 
-    for x in range(0,screen_width):
-        if round(coordinates_changer(x,0)[0],2) % 5 ==0:
-            pygame.draw.line(screen, (0, 255, 0), (x, 0), (x, screen_height), 1)
-            surface = font.render(str(round(coordinates_changer(x, 0)[0],2) ), False, (255, 255, 255))
-            screen.blit(surface, (x, 0))
-    for y in range(0,screen_height):
-        if round(coordinates_changer(0,y)[1],2) % 5 ==0:
-            pygame.draw.line(screen,(0,255,0),(0,y),(screen_width,y),1)
-            surface = font.render(str(round(-coordinates_changer(0,y)[1],2)), False, (255, 255, 255))
-            screen.blit(surface, (0,y))
+    # for x in range(0,screen_width):
+    #     if round(coordinates_changer(x,0)[0],2) % 5 ==0:
+    #         pygame.draw.line(screen, (0, 255, 0), (x, 0), (x, screen_height), 1)
+    #         surface = font.render(str(round(coordinates_changer(x, 0)[0],2) ), False, (255, 255, 255))
+    #         screen.blit(surface, (x, 0))
+    # for y in range(0,screen_height):
+    #     if round(coordinates_changer(0,y)[1],2) % 5 ==0:
+    #         pygame.draw.line(screen,(0,255,0),(0,y),(screen_width,y),1)
+    #         surface = font.render(str(round(-coordinates_changer(0,y)[1],2)), False, (255, 255, 255))
+    #         screen.blit(surface, (0,y))
+
+    counter=0
+    while counter<=coordinates_changer(screen_width,0)[0]:
+        pos = coordinates_chaneg_in_pygame(counter,0)[0]
+        pygame.draw.line(screen,(0,255,0),(pos,0),(pos,screen_height),2)
+        surface = font.render(str(counter), False, (255, 255, 255))
+        screen.blit(surface, (pos,0))
+        counter+= 5
+    counter = 0
+    while counter >= coordinates_changer(0, 0)[0]:
+        pos = coordinates_chaneg_in_pygame(counter, 0)[0]
+        pygame.draw.line(screen, (0, 255, 0), (pos, 0), (pos, screen_height), 2)
+        surface = font.render(str(counter), False, (255, 255, 255))
+        screen.blit(surface, (pos, 0))
+        counter -= 5
+    counter = 0
+    while counter <= coordinates_changer(0, 0)[1]:
+        pos = coordinates_chaneg_in_pygame(0,counter)[1]
+        pygame.draw.line(screen, (0, 255, 0), (0,pos), (screen_width,pos), 2)
+        surface = font.render(str(counter), False, (255, 255, 255))
+        screen.blit(surface, (0,pos))
+        counter += 5
+    counter = 0
+    while counter >= coordinates_changer(0, screen_height)[1]:
+        pos = coordinates_chaneg_in_pygame(0, counter)[1]
+        pygame.draw.line(screen, (0, 255, 0), (0, pos), (screen_width, pos), 2)
+        surface = font.render(str(counter), False, (255, 255, 255))
+        screen.blit(surface, (0,pos))
+        counter -= 5
+
+
 def create_func():
     func_coords=[]
     # x = -screen_width//2
@@ -179,7 +211,7 @@ def mainloop():
         # print(pos)
         # print(coordinates_chaneg_in_pygame(pos[0],pos[1]))
         # print(camera_center_x)
-        print(scale)
+        # print(scale)
         drawing()
 
 
