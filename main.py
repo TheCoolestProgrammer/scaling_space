@@ -7,7 +7,7 @@ screen_height = 720
 screen = pygame.display.set_mode((screen_width,screen_height))
 
 scale = 1
-scale_value = 0.1
+scale_value = 1
 
 camera_center_x = 0
 camera_center_y = 0
@@ -96,12 +96,13 @@ def events_check():
     # pos = pygame.mouse.get_pos()
     if keys[0]:
 
-        # print(pos[0],camera_center_x,(pos[0] - camera_center_x))
-        camera_center_x-=(camera_center_x-pos[0])//scale
-        camera_center_y-=(camera_center_y-pos[1])//scale
-        # camera_center_y+= (pos[1] - camera_center_y)
-        # camera_center_y= pos[1]
-        # print(camera_center_x,camera_center_y)
+        camera_center_x-=(camera_center_x-pos[0])/2
+        camera_center_y-=(camera_center_y-pos[1])/2
+        # if pos[0]<screen_width//2:
+        #     camera_center_x+=speed
+        # else:
+        #     camera_center_x-=speed
+
         scaling()
 
     if keys2[pygame.K_1]:
@@ -170,34 +171,44 @@ def test_camera_draw():
 
 def create_func():
     func_coords=[]
-    # x = -screen_width//2
     x=0
     way = 1
+    # for sinusoida
+
     frequency=10
     high_coof = 10
+
+    # for line func
+
+    k = 1
+    b=0
     while coordinates_changer(x,0)[0] <= coordinates_changer(screen_width,0)[0]:
-        # sinusoida
         x2 = coordinates_changer(x,0)[0]
-        y = math.cos(frequency*math.radians(x2))*high_coof
+        # sinusoida
+        # y = math.cos(frequency*math.radians(x2))*high_coof
+
         #parabola
         # y = x2**2
-        # y = y*-1
-        # x2 = x
-        # if 0<=coordinates_chaneg_in_pygame(0,y)[1] < screen_height:
-        # new_cords=coordinates_chaneg_in_pygame(x2*scale,y*scale)
-        func_coords.append((x2,y))
+
+        # line func
+        # y = k*x2+b
+
+        # hyperbola
+        # if x2 !=0:
+        #     y = 1/x2
+
+        # something
+        if x2 !=0:
+            y = 5*x2-x2**2+1/x2
+            func_coords.append((x2,y))
         x+=way
     return func_coords
 def draw_func():
     global func_coords
-    # print(func_coords)
-    # k = 1/scale
     for i in range(1,len(func_coords)):
         scaled_cords= coordinates_chaneg_in_pygame(func_coords[i-1][0],func_coords[i-1][1])
         scaled_cords2= coordinates_chaneg_in_pygame(func_coords[i][0],func_coords[i][1])
-        # pygame.draw.circle(screen,(255,0,0),(i[0],i[1]),scale//50)
-        # pygame.draw.line(screen,(255,0,0),(func_coords[i-1][0],func_coords[i-1][1]),(func_coords[i][0], func_coords[i][1]),2)
-        pygame.draw.line(screen,(255,0,0),(scaled_cords[0],scaled_cords[1]),(scaled_cords2[0],scaled_cords2[1]),int(scale))
+        pygame.draw.line(screen,(255,0,0),(scaled_cords[0],scaled_cords[1]),(scaled_cords2[0],scaled_cords2[1]),5)
 def drawing():
     screen.fill((0, 0, 0))
     test_camera_draw()
