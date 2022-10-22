@@ -213,10 +213,26 @@ def draw_func():
         scaled_cords2= coordinates_chaneg_in_pygame(func_coords[i][0],func_coords[i][1])
         if type(scaled_cords[0])==float and type(scaled_cords[1])==float and type(scaled_cords2[0])== float and type(scaled_cords2[1])== float:
             pygame.draw.line(screen,(255,0,0),(scaled_cords[0],scaled_cords[1]),(scaled_cords2[0],scaled_cords2[1]),5)
+def draw_image():
+    # a =  my_image.size(0)
+    begin_point_x = -my_image.size[0]//2
+    begin_point_y = my_image.size[1]//2
+    res = coordinates_chaneg_in_pygame(1,1)
+    res2 = coordinates_chaneg_in_pygame(0,0)
+    len_x = res[0]-res2[0]
+    len_y = res2[1]-res[1]
+    for y in range(len(my_pixels_array)):
+        for x in range(len(my_pixels_array[0])):
+            # a=coordinates_chaneg_in_pygame(begin_point_x + x, 0)[0]
+            # b=coordinates_chaneg_in_pygame(0, begin_point_y + y)[1]
+            pygame.draw.rect(screen,(my_pixels_array[y][x]),(coordinates_chaneg_in_pygame(begin_point_x+x,0)[0],
+                                                         coordinates_chaneg_in_pygame(0,begin_point_y-y)[1],
+                                                         len_x,len_y))
 def drawing():
     screen.fill((0, 0, 0))
     test_camera_draw()
-    draw_func()
+    # draw_func()
+    draw_image()
     pygame.display.update()
 def mainloop():
     # func_coords = create_func()
@@ -235,4 +251,14 @@ def mainloop():
 
 if __name__ == '__main__':
     func_coords = create_func()
+    from PIL import Image
+    my_image = Image.open("valakas.jpg")
+    image_pixels = my_image.load()
+    my_pixels_array = []
+    for y in range(my_image.size[1]):
+
+        a = []
+        for x in range(my_image.size[0]):
+            a.append(image_pixels[x,y])
+        my_pixels_array.append(a)
     mainloop()
