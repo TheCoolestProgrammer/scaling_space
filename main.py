@@ -215,8 +215,8 @@ def draw_func():
             pygame.draw.line(screen,(255,0,0),(scaled_cords[0],scaled_cords[1]),(scaled_cords2[0],scaled_cords2[1]),5)
 def draw_image():
     # a =  my_image.size(0)
-    begin_point_x = -my_image.size[0]//2
-    begin_point_y = my_image.size[1]//2
+    begin_point_x = coordinates_chaneg_in_pygame(-my_image.size[0]//2,0)[0]
+    begin_point_y = coordinates_chaneg_in_pygame(0,my_image.size[1]//2)[1]
     res = coordinates_chaneg_in_pygame(1,1)
     res2 = coordinates_chaneg_in_pygame(0,0)
     len_x = res[0]-res2[0]
@@ -225,8 +225,8 @@ def draw_image():
         for x in range(len(my_pixels_array[0])):
             # a=coordinates_chaneg_in_pygame(begin_point_x + x, 0)[0]
             # b=coordinates_chaneg_in_pygame(0, begin_point_y + y)[1]
-            pygame.draw.rect(screen,(my_pixels_array[y][x]),(coordinates_chaneg_in_pygame(begin_point_x+x,0)[0],
-                                                         coordinates_chaneg_in_pygame(0,begin_point_y-y)[1],
+            pygame.draw.rect(screen,(my_pixels_array[y][x]),(begin_point_x+x*len_x,
+                                                         begin_point_y+y*len_y,
                                                          len_x,len_y))
 def drawing():
     screen.fill((0, 0, 0))
