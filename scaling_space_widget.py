@@ -140,11 +140,11 @@ class Scaling_space_widget():
         #     camera_center_y -= (camera_center_y - pos[1]) / 2
         pos = mouse_pos
         if self.is_mouse_on_widget(pos):
-            if self.width < pos[0] >= self.x + self.width - self.border_for_camera_moving_x:
+            if self.x+ self.width- self.border_for_camera_moving_x < pos[0] <= self.x + self.width :
                 self.camera_center_x += self.camera_speed
                 self.func_coords = self.create_func()
 
-            elif self.x < pos[0] <= self.x + self.border_for_camera_moving_x:
+            elif self.x <= pos[0] < self.x + self.border_for_camera_moving_x:
                 self.camera_center_x -= self.camera_speed
                 self.func_coords = self.create_func()
 
