@@ -1,264 +1,47 @@
 import pygame
-import math
-pygame.init()
-clock = pygame.time.Clock()
-screen_width = 1280
-screen_height = 720
-screen = pygame.display.set_mode((screen_width,screen_height))
-
-scale = 1
-scale_value = 1
-
-camera_center_x = 0
-camera_center_y = 0
-process_running = True
-
-objects = []
-
-normal_picture_size = 500
 
 
+class App:
+    def __init__(self):
+        pygame.init()
+        self.clock = pygame.time.Clock()
+        self.screen_width = 1280
+        self.screen_height = 720
+        self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
+        self.process_running = True
+        self.game_running = False
+        self.font = pygame.font.SysFont("Times New Roman", 19)
+        self.space = Scaling_space_widget(100, 200, 300, 300, )
 
-def coordinates_changer(x,y):
-    # в координаты поля
-    global camera_center_y, camera_center_x
-    # if x >= camera_center_y:
-    new_x = camera_center_x+((x-screen_width//2)/scale)
-    # else:
-    #     new_x =camera_center_x-((screen_width//2 - x))
-    # if y >= camera_center_y:
-    new_y = camera_center_y-((y-screen_height//2)/scale)
-    # # else:
-    #     new_y =((screen_height//2 - y))- camera_center_y
-    return(new_x,new_y)
+    def mainloop(self):
 
-def coordinates_chaneg_in_pygame(x,y):
-    global camera_center_y, camera_center_x
-    # x= x*scale
-    # y = y*scale
-    distance_x =x- camera_center_x
-    distance_y =y- camera_center_y
-    distance_x *=scale
-    distance_y*=scale
-    # zero_point_x = camera_center_x-screen_width//2
-    # zero_point_y = camera_center_y-screen_height//2
-    new_x = (screen_width//2 + distance_x)
-    new_y = (screen_height//2 - distance_y)
-    return(new_x,new_y)
-class Object():
-    def __init__(self, x,y):
-        self.x,self.y = coordinates_changer(x,y)
-        # self.x_for_draw,self.y_for_draw = x,y
-        self.image= pygame.image.load("planet.png")
-        self.image = pygame.transform.scale(self.image,(normal_picture_size/scale,normal_picture_size/scale))
+        while self.process_running:
+            self.events_check()
+            self.drawing()
 
-def scaling():
-    global scale, objects, func_coords
-    for object in objects:
-        object.image = pygame.image.load("planet.png")
-        object.image = pygame.transform.scale(object.image, (normal_picture_size *(scale/100), normal_picture_size *(scale/100)))
-    func_coords = create_func()
-def events_check():
-    global process_running, scale, scale_value, objects,camera_center_x,camera_center_y
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            process_running = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                process_running = False
-            elif event.key == pygame.K_1:
-                # if scale >= scale_value and scale_value < 1:
-                #     scale_value = scale_value * 10
-                scale +=scale_value
-                # if scale > 1.1:
-                #     scale = round(scale)
-                scale=round(scale,2)
+    def events_check(self):
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                self.process_running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.process_running = False
+        keys = pygame.mouse.get_pressed()
+        keys2 = pygame.key.get_pressed()
+        mouse_pos = pygame.mouse.get_pos()
 
-                # scale = round(scale, 2)
-                scaling()
-            elif event.key == pygame.K_2:
-                # if scale <= scale_value:
-                #     scale_value = scale_value / 10
-                scale -=scale_value
-                scale=round(scale,2)
-                # if scale > 1.1:
-                #     scale = round(scale)
+        self.space.events_check(events, keys, keys2, mouse_pos)
 
-                # scale = round(scale,2)
-                scaling()
-            elif event.key == pygame.K_q:
-                camera_center_x=1000000
-    keys = pygame.mouse.get_pressed()
-    keys2= pygame.key.get_pressed()
-
-    pos = coordinates_changer(*pygame.mouse.get_pos())
-    # print(pos)
-    # pos = pygame.mouse.get_pos()
-    if keys[0]:
-
-        camera_center_x-=(camera_center_x-pos[0])/2
-        camera_center_y-=(camera_center_y-pos[1])/2
-        # if pos[0]<screen_width//2:
-        #     camera_center_x+=speed
-        # else:
-        #     camera_center_x-=speed
-
-        scaling()
-
-    if keys2[pygame.K_1]:
-        # if scale >= scale_value and scale_value < 1:
-        #     scale_value = scale_value* 10
-        scale += scale_value
-        scale = round(scale,2)
-
-        # if scale >1.1:
-        #     scale = round(scale)
-        scaling()
-    if keys2[pygame.K_2]:
-        # if scale <= scale_value:
-        #     scale_value = scale_value /10
-        scale -= scale_value
-        scale = round(scale,2)
-
-        # if scale > 1.1:
-        #     scale = round(scale)
-        # scale = round(scale, 2)
-        scaling()
-def test_camera_draw():
-    font = pygame.font.SysFont("Times New Roman", int(scale)*2)
-
-    # for x in range(0,screen_width):
-    #     if round(coordinates_changer(x,0)[0],2) % 5 ==0:
-    #         pygame.draw.line(screen, (0, 255, 0), (x, 0), (x, screen_height), 1)
-    #         surface = font.render(str(round(coordinates_changer(x, 0)[0],2) ), False, (255, 255, 255))
-    #         screen.blit(surface, (x, 0))
-    # for y in range(0,screen_height):
-    #     if round(coordinates_changer(0,y)[1],2) % 5 ==0:
-    #         pygame.draw.line(screen,(0,255,0),(0,y),(screen_width,y),1)
-    #         surface = font.render(str(round(-coordinates_changer(0,y)[1],2)), False, (255, 255, 255))
-    #         screen.blit(surface, (0,y))
-    x =camera_center_x-(camera_center_x%5)
-    y =camera_center_y-(camera_center_y%5)
-    counter=x
-    while counter<=coordinates_changer(screen_width,0)[0]:
-        pos = coordinates_chaneg_in_pygame(counter,0)[0]
-        pygame.draw.line(screen,(0,255,0),(pos,0),(pos,screen_height),2)
-        surface = font.render(str(counter), False, (255, 255, 255))
-        screen.blit(surface, (pos,0))
-        counter+= 5
-    counter = x
-    while counter >= coordinates_changer(0, 0)[0]:
-        pos = coordinates_chaneg_in_pygame(counter, 0)[0]
-        pygame.draw.line(screen, (0, 255, 0), (pos, 0), (pos, screen_height), 2)
-        surface = font.render(str(counter), False, (255, 255, 255))
-        screen.blit(surface, (pos, 0))
-        counter -= 5
-    counter = y
-    while counter <= coordinates_changer(0, 0)[1]:
-        pos = coordinates_chaneg_in_pygame(0,counter)[1]
-        pygame.draw.line(screen, (0, 255, 0), (0,pos), (screen_width,pos), 2)
-        surface = font.render(str(counter), False, (255, 255, 255))
-        screen.blit(surface, (0,pos))
-        counter += 5
-    counter = y
-    while counter >= coordinates_changer(0, screen_height)[1]:
-        pos = coordinates_chaneg_in_pygame(0, counter)[1]
-        pygame.draw.line(screen, (0, 255, 0), (0, pos), (screen_width, pos), 2)
-        surface = font.render(str(counter), False, (255, 255, 255))
-        screen.blit(surface, (0,pos))
-        counter -= 5
-
-
-def create_func():
-    func_coords=[]
-    x=0
-    way = 1
-    # for sinusoida
-
-    frequency=10
-    high_coof = 10
-
-    # for line func
-
-    k = 1
-    b=0
-    while coordinates_changer(x,0)[0] <= coordinates_changer(screen_width,0)[0]:
-        x2 = coordinates_changer(x,0)[0]
-        # sinusoida
-        # y = math.cos(frequency*math.radians(x2))*high_coof
-
-        #parabola
-        # y = x2**2
-
-        # line func
-        # y = k*x2+b
-
-        # hyperbola
-        # if x2 !=0:
-        #     y = 1/x2
-
-        # something
-        if x2 !=0 and -100<x2<1000:
-            # y = 5*x2-x2**2+1/x2
-            y = math.sin((1/x2))**x2
-
-
-            func_coords.append((x2,y))
-        x+=way
-    return func_coords
-def draw_func():
-    global func_coords
-    for i in range(1,len(func_coords)):
-        scaled_cords= coordinates_chaneg_in_pygame(func_coords[i-1][0],func_coords[i-1][1])
-        scaled_cords2= coordinates_chaneg_in_pygame(func_coords[i][0],func_coords[i][1])
-        if type(scaled_cords[0])==float and type(scaled_cords[1])==float and type(scaled_cords2[0])== float and type(scaled_cords2[1])== float:
-            pygame.draw.line(screen,(255,0,0),(scaled_cords[0],scaled_cords[1]),(scaled_cords2[0],scaled_cords2[1]),5)
-def draw_image():
-    # a =  my_image.size(0)
-    begin_point_x = coordinates_chaneg_in_pygame(-my_image.size[0]//2,0)[0]
-    begin_point_y = coordinates_chaneg_in_pygame(0,my_image.size[1]//2)[1]
-    res = coordinates_chaneg_in_pygame(1,1)
-    res2 = coordinates_chaneg_in_pygame(0,0)
-    len_x = res[0]-res2[0]
-    len_y = res2[1]-res[1]
-    for y in range(len(my_pixels_array)):
-        for x in range(len(my_pixels_array[0])):
-            # a=coordinates_chaneg_in_pygame(begin_point_x + x, 0)[0]
-            # b=coordinates_chaneg_in_pygame(0, begin_point_y + y)[1]
-            pygame.draw.rect(screen,(my_pixels_array[y][x]),(begin_point_x+x*len_x,
-                                                         begin_point_y+y*len_y,
-                                                         len_x,len_y))
-def drawing():
-    screen.fill((0, 0, 0))
-    test_camera_draw()
-    # draw_func()
-    draw_image()
-    pygame.display.update()
-def mainloop():
-    # func_coords = create_func()
-
-    while process_running:
-        events_check()
-        pygame.time.delay(20)
-        # print(scale_value,scale)
-        # pos = coordinates_changer(0,0)
-        # print(pos)
-        # print(coordinates_chaneg_in_pygame(pos[0],pos[1]))
-        # print(camera_center_x)
-        # print(scale)
-        drawing()
+    def drawing(self):
+        self.screen.fill((0, 0, 0))
+        self.space.grid_draw(self.screen)
+        self.space.draw_func(self.screen)
+        pygame.display.update()
 
 
 if __name__ == '__main__':
-    func_coords = create_func()
-    from PIL import Image
-    my_image = Image.open("valakas.jpg")
-    image_pixels = my_image.load()
-    my_pixels_array = []
-    for y in range(my_image.size[1]):
+    from scaling_space_widget import Scaling_space_widget
 
-        a = []
-        for x in range(my_image.size[0]):
-            a.append(image_pixels[x,y])
-        my_pixels_array.append(a)
-    mainloop()
+    app = App()
+    app.mainloop()
