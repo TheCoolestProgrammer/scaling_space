@@ -4,7 +4,7 @@ from PIL import Image
 
 
 class Scaling_space_widget():
-    def __init__(self, x, y, width, height, scale=10, scale_value=0.1, camera_speed=1, border_for_camera_moving_x=20,
+    def __init__(self, x, y, width, height, func=False, scale=10, scale_value=0.1, camera_speed=1, border_for_camera_moving_x=20,
                  border_for_camera_moving_y=20):
         self.x = x
         self.y = y
@@ -21,17 +21,22 @@ class Scaling_space_widget():
         self.camera_speed = camera_speed
         self.border_for_camera_moving_x = border_for_camera_moving_x
         self.border_for_camera_moving_y = border_for_camera_moving_y
-        self.func_coords = self.create_func()
 
-        self.my_image = Image.open("valakas.jpg")
-        self.image_pixels = self.my_image.load()
-        self.my_pixels_array = []
-        for y in range(self.my_image.size[1]):
+        self.angle = 0
+        self.func=func
 
-            a = []
-            for x in range(self.my_image.size[0]):
-                a.append(self.image_pixels[x, y])
-            self.my_pixels_array.append(a)
+        if self.func:
+
+            self.func_coords = self.create_func(self.func)
+        # self.my_image = Image.open("valakas.jpg")
+        # self.image_pixels = self.my_image.load()
+        # self.my_pixels_array = []
+        # for y in range(self.my_image.size[1]):
+        #
+        #     a = []
+        #     for x in range(self.my_image.size[0]):
+        #         a.append(self.image_pixels[x, y])
+        #     self.my_pixels_array.append(a)
 
     def coordinates_changer(self, x, y):
         # в координаты поля
@@ -105,58 +110,70 @@ class Scaling_space_widget():
         self.draw_func(screen)
         self.draw_image(screen)
 
-    def is_mouse_on_widget(self, pos):
+    def is_on_widget(self, pos):
         if self.x <= pos[0] <= self.x + self.width and self.y <= pos[1] <= self.y + self.height:
             return True
         else:
             return False
 
     def events_check(self, events, mouse_pressed, keyboard_pressed, mouse_pos):
-        for event in events:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_1:
-                    self.scale += self.scale_value
-                    self.scale = round(self.scale, 2)
-
-                elif event.key == pygame.K_2:
-                    if self.scale - self.scale_value >= self.scale_value:
-                        self.scale -= self.scale_value
+        if self.is_on_widget(mouse_pos):
+            for event in events:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_1:
+                        self.scale += self.scale_value
                         self.scale = round(self.scale, 2)
-
-        if keyboard_pressed[pygame.K_1]:
-            self.scale += self.scale_value
-            self.scale = round(self.scale, 2)
-            self.func_coords = self.create_func()
-
-        if keyboard_pressed[pygame.K_2]:
-            if self.scale - self.scale_value >= self.scale_value:
-                self.scale -= self.scale_value
+                    elif event.key == pygame.K_2:
+                        if self.scale - self.scale_value >= self.scale_value:
+                            self.scale -= self.scale_value
+                            self.scale = round(self.scale, 2)
+            if keyboard_pressed[pygame.K_1]:
+                self.scale += self.scale_value
                 self.scale = round(self.scale, 2)
-                self.func_coords = self.create_func()
+                # self.func_coords = self.create_func()
+                if self.func:
+                    self.change_angle(self.angle)
+            if keyboard_pressed[pygame.K_2]:
+                if self.scale - self.scale_value >= self.scale_value:
+                    self.scale -= self.scale_value
+                    self.scale = round(self.scale, 2)
+                    # self.func_coords = self.create_func()
+                    if self.func:
+                        self.change_angle(self.angle)
+            if keyboard_pressed[pygame.K_8]:
+                print(self.angle)
+                self.angle += 1
+                # self.func_coords = self.create_func()
+                if self.func:
+                    self.change_angle(self.angle + 1)
+            if keyboard_pressed[pygame.K_9]:
+                self.angle -= 1
+                if self.func:
+                    self.change_angle(self.angle - 1)
+            pos = mouse_pos
+            if self.is_on_widget(pos):
+                if self.x + self.width - self.border_for_camera_moving_x < pos[0] <= self.x + self.width:
+                    self.camera_center_x += self.camera_speed
+                    # self.func_coords = self.create_func()
+                    if self.func:
+                        self.change_angle(self.angle)
+                elif self.x <= pos[0] < self.x + self.border_for_camera_moving_x:
+                    self.camera_center_x -= self.camera_speed
+                    # self.func_coords = self.create_func()
+                    if self.func:
+                        self.change_angle(self.angle)
+                if self.y + self.height - self.border_for_camera_moving_y < pos[1] <= self.y + self.height:
+                    self.camera_center_y -= self.camera_speed
+                    # self.func_coords = self.create_func()
+                    if self.func:
+                        self.change_angle(self.angle)
+                elif self.y < pos[1] <= self.y + self.border_for_camera_moving_y:
+                    self.camera_center_y += self.camera_speed
+                    # self.func_coords = self.create_func()
+                    if self.func:
+                        self.change_angle(self.angle)
 
-        # pos = self.coordinates_changer(*mouse_pos)
-        # if keys[0]:
-        #     camera_center_x -= (camera_center_x - pos[0]) / 2
-        #     camera_center_y -= (camera_center_y - pos[1]) / 2
-        pos = mouse_pos
-        if self.is_mouse_on_widget(pos):
-            if self.x+ self.width- self.border_for_camera_moving_x < pos[0] <= self.x + self.width :
-                self.camera_center_x += self.camera_speed
-                self.func_coords = self.create_func()
-
-            elif self.x <= pos[0] < self.x + self.border_for_camera_moving_x:
-                self.camera_center_x -= self.camera_speed
-                self.func_coords = self.create_func()
-
-            if self.y + self.height - self.border_for_camera_moving_y < pos[1] <= self.y + self.height:
-                self.camera_center_y -= self.camera_speed
-                self.func_coords = self.create_func()
-
-            elif self.y < pos[1] <= self.y + self.border_for_camera_moving_y:
-                self.camera_center_y += self.camera_speed
-                self.func_coords = self.create_func()
-
-    def create_func(self):
+    def create_func(self,func):
         func_coords = []
         x = self.x
         way = 1
@@ -172,17 +189,21 @@ class Scaling_space_widget():
         while self.coordinates_changer(x, 0)[0] <= self.coordinates_changer(self.x + self.width, 0)[0]:
             x2 = self.coordinates_changer(x, 0)[0]
             # sinusoida
-            y = math.cos(frequency * math.radians(x2)) * high_coof
+            if func == "sinx":
+                y = math.cos(frequency * math.radians(x2)) * high_coof
 
             # parabola
-            # y = x2**2
+            elif func=="x^2":
+                y = x2**2
 
             # line func
-            # y = k*x2+b
+            elif func == "x":
+                y = k*x2+b
 
             # hyperbola
-            # if x2 !=0:
-            #     y = 1/x2
+            elif func == "1/x":
+                if x2 !=0:
+                    y = 1/x2
 
             # something
             # if x2 != 0 and -100 < x2 < 1000:
@@ -191,6 +212,7 @@ class Scaling_space_widget():
             #
             func_coords.append((x2, y))
             x += way
+
         return func_coords
 
     def draw_func(self, screen):
@@ -201,6 +223,34 @@ class Scaling_space_widget():
                     scaled_cords2[0]) == float and type(scaled_cords2[1]) == float:
                 pygame.draw.line(screen, (255, 0, 0), (scaled_cords[0], scaled_cords[1]),
                                  (scaled_cords2[0], scaled_cords2[1]), 5)
+
+    def change_angle(self, angle):
+        # self.func_coords = self.create_func()
+        self.func_coords = self.create_func(self.func)
+
+        for i in range(len(self.func_coords)):
+            new_x = self.func_coords[i][0] * math.cos(math.radians(angle)) + self.func_coords[i][1] * math.sin(
+                math.radians(angle))
+            new_y = self.func_coords[i][1] * math.cos(math.radians(angle)) - self.func_coords[i][0] * math.sin(
+                math.radians(angle))
+            # if self.is_on_widget((new_x,new_y)):
+            self.func_coords[i] = (new_x, new_y)
+            # else:
+            #     if self.coordinates_changer_in_pygame(0,new_y)[1]> self.y+self.height:
+            #         self.func_coords[i] =(new_x,self.coordinates_changer(0,self.y+self.height)[1])
+            #     else:
+            #         self.func_coords[i] = (new_x, self.coordinates_changer(0,self.y)[1])
+
+    def create_lissajous(self, a, b, am_a, am_b, phase_shift, t):
+        x = am_a * math.sin(a * t + phase_shift)
+        y = am_b * math.sin(b * t)
+        return (x, y)
+
+    def draw_lissajous(self, screen, lissajous_cords):
+        for i in lissajous_cords:
+            pos = self.coordinates_changer_in_pygame(i[0], i[1])
+            if self.is_on_widget(pos):
+                pygame.draw.circle(screen, (0, 0, 255), (pos[0], pos[1]), int(self.scale)*2)
 
     def draw_image(self, screen):
         # a =  my_image.size(0)
